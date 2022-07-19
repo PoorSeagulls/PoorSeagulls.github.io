@@ -52,3 +52,22 @@ baseURL = 'https://PoorSeagulls.github.io'
   # can be overridden in a page's front-matter
   # TocTitle = "Table of Contents" # default
 
+[languages]
+  [languages.en]
+    languageName = "English"
+    title = "PoorSeagulls"
+    subtitle = "Exporting ignorance since 2022"
+    owner = ""
+    keywords = ""
+    copyright = ""
+    menuMore = "Show more"
+    readMore = "Read more"
+    readOtherPosts = "Read other posts"
+    newerPosts = "Newer posts"
+    olderPosts = "Older posts"
+    missingContentMessage = "Page not found..."
+    missingBackButtonLabel = "Back to home page"
+
+    [languages.en.params.logo]
+      logoText = "Poor Seagulls"
+      logoHomeLink = "/"
