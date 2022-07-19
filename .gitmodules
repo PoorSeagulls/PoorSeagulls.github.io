@@ -1,0 +1,3 @@
+[submodule "themes/cli"]
+	path = themes/cli
+	url = git@github.com:o0th/hugo-cli.git

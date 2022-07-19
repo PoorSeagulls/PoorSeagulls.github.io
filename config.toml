@@ -1,0 +1,13 @@
+title = 'PoorSeagulls'
+theme = 'cli'
+languageCode = 'en-us'
+baseURL = 'https://PoorSeagulls.github.io'
+
+[params]
+username = 'PoorSeagulls'
+github = 'https://github.com/PoorSeagulls'
+
+[markup]
+[markup.highlight]
+style = 'dracula'
+lineNos = true
