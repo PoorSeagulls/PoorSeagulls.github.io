@@ -9,7 +9,7 @@ baseURL = 'https://PoorSeagulls.github.io'
   contentTypeName = "posts"
 
   # ["orange", "blue", "red", "green", "pink"]
-  themeColor = "orange"
+  themeColor = "green"
 
   # if you set this to 0, only submenu trigger will be visible
   showMenuItems = 2
@@ -55,7 +55,7 @@ baseURL = 'https://PoorSeagulls.github.io'
 [languages]
   [languages.en]
     languageName = "English"
-    title = "PoorSeagulls"
+    title = "Poor Seagulls"
     subtitle = "Exporting ignorance since 2022"
     owner = ""
     keywords = ""
