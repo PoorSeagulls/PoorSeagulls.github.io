@@ -56,7 +56,12 @@ an AWS CodeBuild Project to be done.&lt;/p>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> await $id
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>References&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The solution was to write a function that called itself every n second while
+the status was in progress.&lt;/p>
+&lt;p>While it is possible to achieve the same result with a POSIX shell like Bash or
+Fish, I give it a try to Nu and looking at the result, I&amp;rsquo;m sure I will use it
+again.&lt;/p>
+&lt;p>References&lt;/p>
 &lt;ul>
 &lt;li>&lt;a href="https://www.jitbit.com/alexblog/249-now-thats-what-i-call-a-hacker/">Now that&amp;rsquo;s what I call a hacker&lt;/a>&lt;/li>
 &lt;li>&lt;a href="https://github.com/nushell/nushell">nushell&lt;/a>&lt;/li>
