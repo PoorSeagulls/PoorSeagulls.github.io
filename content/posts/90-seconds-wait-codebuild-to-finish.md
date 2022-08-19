@@ -3,7 +3,7 @@ title: "90 Seconds, wait codebuild to finish"
 author: "Sabato Luca Guadagno <o0th@pm.me>"
 date: 2022-08-19T08:59:10+02:00
 draft: false
-tags: [90seconds, nushell, aws, aws-codebuilds]
+tags: [90seconds, nushell, aws, aws-cli, aws-codebuilds]
 ---
 
 A couple of years ago, I came across an article regarding a Russian developer
@@ -70,6 +70,13 @@ def main [project] {
   await $id
 }
 ```
+
+The solution was to write a function that called itself every n second while
+the status was in progress.
+
+While it is possible to achieve the same result with a POSIX shell like Bash or
+Fish, I give it a try to Nu and looking at the result, I'm sure I will use it
+again.
 
 References
 - [Now that's what I call a hacker](https://www.jitbit.com/alexblog/249-now-thats-what-i-call-a-hacker/)
