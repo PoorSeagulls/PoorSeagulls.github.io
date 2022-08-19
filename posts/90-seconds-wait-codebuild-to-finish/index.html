@@ -1,0 +1,62 @@
+<!doctype html><html lang=en><head><title>90 Seconds, wait codebuild to finish :: Poor Seagulls</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A couple of years ago, I came across an article regarding a Russian developer who had one brilliant rule: if anything requires more than 90 seconds, write a script to automate it.
+There is where my mind went yesterday when I was executing a series of operations inherited from a &amp;ldquo;state of the art&amp;rdquo; service currently running in our production environment: run a build, wait for it to finish, and run a second build."><meta name=keywords content><meta name=robots content="noodp"><link rel=canonical href=https://PoorSeagulls.github.io/posts/90-seconds-wait-codebuild-to-finish/><link rel=stylesheet href=https://PoorSeagulls.github.io/assets/style.css><link rel=stylesheet href=https://PoorSeagulls.github.io/assets/green.css><link rel=apple-touch-icon href=https://PoorSeagulls.github.io/img/apple-touch-icon-192x192.png><link rel="shortcut icon" href=https://PoorSeagulls.github.io/img/favicon/green.png><meta name=twitter:card content="summary"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="og:title" content="90 Seconds, wait codebuild to finish"><meta property="og:description" content="A couple of years ago, I came across an article regarding a Russian developer who had one brilliant rule: if anything requires more than 90 seconds, write a script to automate it.
+There is where my mind went yesterday when I was executing a series of operations inherited from a &amp;ldquo;state of the art&amp;rdquo; service currently running in our production environment: run a build, wait for it to finish, and run a second build."><meta property="og:url" content="https://PoorSeagulls.github.io/posts/90-seconds-wait-codebuild-to-finish/"><meta property="og:site_name" content="Poor Seagulls"><meta property="og:image" content="https://PoorSeagulls.github.io/img/favicon/green.png"><meta property="og:image:width" content="2048"><meta property="og:image:height" content="1024"><meta property="article:published_time" content="2022-08-19 08:59:10 +0200 +0200"></head><body class=green><div class="container headings--one-size"><header class=header><div class=header__inner><div class=header__logo><a href=/><div class=logo>Poor Seagulls</div></a></div></div></header><div class=content><div class=post><h1 class=post-title><a href=https://PoorSeagulls.github.io/posts/90-seconds-wait-codebuild-to-finish/>90 Seconds, wait codebuild to finish</a></h1><div class=post-meta><span class=post-date>2022-08-19</span>
+<span class=post-author>:: Sabato Luca Guadagno &lt;o0th@pm.me></span></div><span class=post-tags>#<a href=https://PoorSeagulls.github.io/tags/90seconds/>90seconds</a>&nbsp;
+#<a href=https://PoorSeagulls.github.io/tags/nushell/>nushell</a>&nbsp;
+#<a href=https://PoorSeagulls.github.io/tags/aws/>aws</a>&nbsp;
+#<a href=https://PoorSeagulls.github.io/tags/aws-codebuilds/>aws-codebuilds</a>&nbsp;</span><div class=post-content><div><p>A couple of years ago, I came across an article regarding a Russian developer
+who had one brilliant rule: if anything requires more than 90 seconds, write
+a script to automate it.</p><p>There is where my mind went yesterday when I was executing a series of
+operations inherited from a &ldquo;state of the art&rdquo; service currently running in
+our production environment: run a build, wait for it to finish, and run a
+second build.</p><p>This operation takes me, on average, 10 to 15 minutes to complete. Of course,
+during this time, I can, and I do, something else, and most of the time, I
+forget to run the second build. So to avoid furthermore this waste of time,
+I decide to automate this process.</p><p>Since a blog post is not where to share a complete script that nobody cares to
+run except me, I will share the only challenging problem I faced: waiting for
+an AWS CodeBuild Project to be done.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#75715e>#!/usr/bin/env nu
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>def await <span style=color:#f92672>[</span>id<span style=color:#f92672>]</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  let batch <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    aws codebuild batch-get-builds --ids $id
+</span></span><span style=display:flex><span>    | complete
+</span></span><span style=display:flex><span>  <span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>$batch | get exit_code<span style=color:#f92672>)</span> !<span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>{</span> exit <span style=color:#ae81ff>1</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  let status <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    $batch
+</span></span><span style=display:flex><span>    | get stdout
+</span></span><span style=display:flex><span>    | from json
+</span></span><span style=display:flex><span>    | get builds
+</span></span><span style=display:flex><span>    | get <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    | get buildStatus
+</span></span><span style=display:flex><span>  <span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> $status <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;IN_PROGRESS&#39;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>    sleep 10sec
+</span></span><span style=display:flex><span>    await $id
+</span></span><span style=display:flex><span>  <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>def main <span style=color:#f92672>[</span>project<span style=color:#f92672>]</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>  let build <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    aws codebuild start-build --project-name $project
+</span></span><span style=display:flex><span>    | complete
+</span></span><span style=display:flex><span>  <span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>$build | get exit_code<span style=color:#f92672>)</span> !<span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>{</span> exit <span style=color:#ae81ff>1</span> <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  let id <span style=color:#f92672>=</span> <span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>    $build
+</span></span><span style=display:flex><span>    | get stdout
+</span></span><span style=display:flex><span>    | from json
+</span></span><span style=display:flex><span>    | get build
+</span></span><span style=display:flex><span>    | get id
+</span></span><span style=display:flex><span>  <span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  await $id
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></div><p>References</p><ul><li><a href=https://www.jitbit.com/alexblog/249-now-thats-what-i-call-a-hacker/>Now that&rsquo;s what I call a hacker</a></li><li><a href=https://github.com/nushell/nushell>nushell</a></li></ul></div></div></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2022 Powered by <a href=http://gohugo.io>Hugo</a></span>
+<span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span></div></div></footer><script src=https://PoorSeagulls.github.io/assets/main.js></script>
+<script src=https://PoorSeagulls.github.io/assets/prism.js></script></div></body></html>
