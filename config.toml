@@ -3,6 +3,10 @@ theme = 'terminal'
 languageCode = 'en-us'
 baseURL = 'https://PoorSeagulls.github.io'
 
+[taxonomies]
+   tag = "tags"
+   category = "categories"
+
 [params]
   # dir name of your main content (default is `content/posts`).
   # the list of set content will show up on your index page (baseurl).
